@@ -78,7 +78,7 @@ body {
   width: 100vw;
   height: 100vh;
   background-color: #8b4545;
-  background-image: url('/images/background_2.png');
+  background-image: url('images/background_2.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -208,20 +208,20 @@ body {
 
   <div id="bake-screen">
     <button id="backBtn" class="back-button">
-        <img src="/buttons/back.png" alt="Back">
+        <img src="buttons/back.png" alt="Back">
       </button>
     <div id="cookie-container">
-      <img id="cookie-dough" src="/images/cookie_1.png" alt="Cookie Dough">
-      <img id="cookie-baking" src="/images/cookie-gif.PNG" class="hidden" alt="Baking">
-      <img id="cookie-done" src="/images/done-cookie.png" class="hidden" alt="Done Cookie">
+      <img id="cookie-dough" src="images/cookie_1.png" alt="Cookie Dough">
+      <img id="cookie-baking" src="images/cookie-gif.PNG" class="hidden" alt="Baking">
+      <img id="cookie-done" src="images/done-cookie.png" class="hidden" alt="Done Cookie">
     </div>
 
     <div class="controls">
       <button id="bakeStart">
-        <img src="/buttons/start.png" alt="Start">
+        <img src="buttons/start.png" alt="Start">
       </button>
       <button id="bakeEnd">
-        <img src="/buttons/reset.png" alt="Reset">
+        <img src="buttons/reset.png" alt="Reset">
       </button>
     </div>
 
@@ -302,7 +302,7 @@ body {
 
   // Pre-load background image
   const bgImg = new Image();
-  bgImg.src = '/images/background_2.png';
+  bgImg.src = 'images/background_2.png';
 
   // Back button - go to start screen
   document.getElementById('backBtn').addEventListener('click', () => {
