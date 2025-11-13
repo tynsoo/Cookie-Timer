@@ -4,9 +4,206 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baking Timer</title>
-  <link rel="stylesheet" href="style.css">
   <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
 </head>
+
+<style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: 'Common Pixel', sans-serif;
+}
+
+/* ==================== START SCREEN ==================== */
+
+#start-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #8b4545;
+}
+
+#start-screen-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+#startBtn {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+#start-button-img {
+  width: 800px;
+  height: auto;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+
+#start-button-img:hover {
+  transform: scale(1.1);
+}
+
+/* ==================== BAKE SCREEN ==================== */
+
+#bake-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #8b4545;
+  background-image: url('/images/background_2.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  image-rendering: pixelated;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff3e0;
+}
+
+/* ==================== BACK BUTTON ==================== */
+
+.back-button {
+  position: fixed;
+  top: 5px;
+  left: 1%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1000;
+}
+
+.back-button img {
+  width: 300px;
+  height: auto;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+
+.back-button img:hover {
+  transform: scale(1.1);
+}
+
+/* ==================== COOKIE CONTAINER ==================== */
+
+#cookie-container {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+#cookie-dough {
+  width: 200px;
+  height: auto;
+  image-rendering: pixelated;
+  margin: 20px auto;
+  transition: transform 0.2s ease;
+}
+
+#cookie-baking {
+  width: 400px;
+  height: 400px;
+  image-rendering: pixelated;
+  margin: 5px;
+  transition: transform 0.2s ease;
+}
+
+#cookie-done {
+  width: 500px;
+  height: auto;
+  image-rendering: pixelated;
+  margin: 20px auto;
+  transition: transform 0.2s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+#cookie-dough:hover {
+  transform: scale(1.05);
+}
+
+/* ==================== TIMER ==================== */
+
+#done,
+#timer {
+  background-color: #a12b00;
+  color: #ffe69c;
+  font-size: 64px;
+  font-family: 'Common Pixel', sans-serif;
+  border-radius: 20px;
+  padding: 10px 30px;
+  margin-top: 0px;
+  box-shadow: 0 4px 0 #6d1900;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* ==================== CONTROLS ==================== */
+
+.controls {
+  display: flex;
+  gap: 200px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+#bakeStart,
+#bakeEnd {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+#bakeStart img,
+#bakeEnd img {
+  width: 200px;
+  height: auto;
+  image-rendering: pixelated;
+  transition: transform 0.2s;
+}
+
+#bakeStart img:hover,
+#bakeEnd img:hover {
+  transform: scale(1.1);
+}
+
+</style>
+
 <body>
 
   <div id="bake-screen">
@@ -31,7 +228,93 @@
     <div id="timer">10:00</div>
     <div class="hidden" id="done">ENJOY!</div>
   </div>
-
-  <script src="script.js"></script>
 </body>
+
+
+<script>
+  const cookieDough = document.getElementById('cookie-dough');
+  const cookieBaking = document.getElementById('cookie-baking');
+  const cookieDone = document.getElementById('cookie-done');  // Add this
+  const bakeStart = document.getElementById('bakeStart');
+  const bakeEnd = document.getElementById('bakeEnd');
+  const timerDisplay = document.getElementById('timer');
+  const doneMsg = document.getElementById('done');
+
+  // Timer variables
+  let timer = 600;
+  let intervalId = null;
+
+  // Helper: Format seconds as MM:SS
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  }
+
+  // Start baking (countdown)
+  bakeStart.addEventListener('click', () => {
+    if (intervalId !== null) return; 
+    
+    // Transition: show baking GIF, hide dough
+    cookieDough.classList.add('hidden');
+    cookieBaking.classList.remove('hidden');
+    cookieDone.classList.add('hidden');
+    doneMsg.classList.add('hidden');
+    
+    intervalId = setInterval(() => {
+      timer--;
+      timerDisplay.textContent = formatTime(timer);
+      
+      // When timer runs out
+      if (timer <= 0) {
+        clearInterval(intervalId);
+        intervalId = null;
+        
+        // Hide baking, show done cookie
+        cookieBaking.classList.add('hidden');
+        cookieDone.classList.remove('hidden');  
+        
+        timerDisplay.classList.add('hidden');
+        doneMsg.classList.remove('hidden');
+      }
+    }, 1000);
+  });
+
+  // Reset/stop baking
+  bakeEnd.addEventListener('click', resetTimer);
+
+  function resetTimer() {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+    
+    timer = 600;
+    timerDisplay.textContent = formatTime(timer);
+    timerDisplay.classList.remove('hidden');
+    doneMsg.classList.add('hidden');
+    
+  
+    cookieDough.classList.remove('hidden');
+    cookieBaking.classList.add('hidden');
+    cookieDone.classList.add('hidden'); 
+  }
+
+  // Pre-load background image
+  const bgImg = new Image();
+  bgImg.src = '/images/background_2.png';
+
+  // Back button - go to start screen
+  document.getElementById('backBtn').addEventListener('click', () => {
+      
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      
+      window.location.href = 'index.html';
+    });
+
+  </script>
+
 </html>
