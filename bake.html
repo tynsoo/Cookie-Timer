@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baking Timer</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
+</head>
+<body>
+
+  <div id="bake-screen">
+    <button id="backBtn" class="back-button">
+        <img src="/buttons/back.png" alt="Back">
+      </button>
+    <div id="cookie-container">
+      <img id="cookie-dough" src="/images/cookie_1.png" alt="Cookie Dough">
+      <img id="cookie-baking" src="/images/cookie-gif.PNG" class="hidden" alt="Baking">
+      <img id="cookie-done" src="/images/done-cookie.png" class="hidden" alt="Done Cookie">
+    </div>
+
+    <div class="controls">
+      <button id="bakeStart">
+        <img src="/buttons/start.png" alt="Start">
+      </button>
+      <button id="bakeEnd">
+        <img src="/buttons/reset.png" alt="Reset">
+      </button>
+    </div>
+
+    <div id="timer">10:00</div>
+    <div class="hidden" id="done">ENJOY!</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
