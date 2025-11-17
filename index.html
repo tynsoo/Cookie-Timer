@@ -32,10 +32,27 @@ body {
 
 #start-screen {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
   background-color: #8b4545;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* start from top, not center */
+  gap: 1vh; /* space between title and button */
+  padding-top: 20vh; /* move the title down without affecting button */
+}
+
+#start-title {
+  font-size: 10vw; 
+  color: #fff;
+  text-shadow: 2px 2px #000;
+  letter-spacing: 2px;
+  font-weight: bold;
+  z-index: 1; 
+  text-align: center;      /* center the text */
+  width: 100%;   
 }
 
 #start-screen-bg {
@@ -46,21 +63,20 @@ body {
   height: 100%;
   object-fit: cover;
   image-rendering: pixelated;
+  z-index: 0;
 }
 
 #startBtn {
-  position: absolute;
-  left: 50%;
-  bottom: 2%;
-  transform: translateX(-50%);
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
+  z-index: 2; /* button above background */
 }
 
 #start-button-img {
-  width: 800px;
+  width: 50vw; /* responsive width */
+  max-width: 500px;
   height: auto;
   image-rendering: pixelated;
   transition: transform 0.2s ease;
@@ -70,135 +86,27 @@ body {
   transform: scale(1.1);
 }
 
-/* ==================== BAKE SCREEN ==================== */
+/* MEDIA QUERIES */
+@media screen and (max-width: 768px) {
+  #start-title {
+    font-size: 12vw;
+  }
 
-#bake-screen {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background-color: #8b4545;
-  background-image: url('images/background_2.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  image-rendering: pixelated;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #fff3e0;
+  #start-button-img {
+    width: 60vw;
+    max-width: 300px;
+  }
 }
 
-/* ==================== BACK BUTTON ==================== */
+@media screen and (max-width: 480px) {
+  #start-title {
+    font-size: 14vw;
+  }
 
-.back-button {
-  position: fixed;
-  top: 5px;
-  left: 1%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1000;
-}
-
-.back-button img {
-  width: 300px;
-  height: auto;
-  image-rendering: pixelated;
-  transition: transform 0.2s ease;
-}
-
-.back-button img:hover {
-  transform: scale(1.1);
-}
-
-/* ==================== COOKIE CONTAINER ==================== */
-
-#cookie-container {
-  width: 100%;
-  height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-#cookie-dough {
-  width: 200px;
-  height: auto;
-  image-rendering: pixelated;
-  margin: 20px auto;
-  transition: transform 0.2s ease;
-}
-
-#cookie-baking {
-  width: 400px;
-  height: 400px;
-  image-rendering: pixelated;
-  margin: 5px;
-  transition: transform 0.2s ease;
-}
-
-#cookie-done {
-  width: 500px;
-  height: auto;
-  image-rendering: pixelated;
-  margin: 20px auto;
-  transition: transform 0.2s ease;
-}
-
-.hidden {
-  display: none;
-}
-
-#cookie-dough:hover {
-  transform: scale(1.05);
-}
-
-/* ==================== TIMER ==================== */
-
-#done,
-#timer {
-  background-color: #a12b00;
-  color: #ffe69c;
-  font-size: 64px;
-  font-family: 'Common Pixel', sans-serif;
-  border-radius: 20px;
-  padding: 10px 30px;
-  margin-top: 0px;
-  box-shadow: 0 4px 0 #6d1900;
-  image-rendering: pixelated;
-  flex-shrink: 0;
-}
-
-/* ==================== CONTROLS ==================== */
-
-.controls {
-  display: flex;
-  gap: 200px;
-  margin-top: 2px;
-  flex-shrink: 0;
-}
-
-#bakeStart,
-#bakeEnd {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-#bakeStart img,
-#bakeEnd img {
-  width: 200px;
-  height: auto;
-  image-rendering: pixelated;
-  transition: transform 0.2s;
-}
-
-#bakeStart img:hover,
-#bakeEnd img:hover {
-  transform: scale(1.1);
+  #start-button-img {
+    width: 70vw;
+    max-width: 250px;
+  }
 }
 
 </style>
@@ -206,11 +114,12 @@ body {
 <body>
 
   <div id="start-screen">
-    <img id="start-screen-bg" src="images/background.png">
+    <img id="start-screen-bg" src="images/start_background.png">
+    <h1 id="start-title">Cookie timer</h1>
     <a id="startBtn" href="bake.html">
       <img id="start-button-img" src="buttons/lets-bake.png" alt="Start Baking">
     </a>    
-  </div>
+</div>
   
 </body>
 
