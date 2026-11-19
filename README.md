@@ -83,6 +83,7 @@ Cookie-Timer/
 ├── images/       backgrounds and cookie art
 ├── index.html    start screen
 ├── bake.html     timer screen
+├── fonts/        Silkscreen pixel font (SIL Open Font License)
 ├── tools/        make_icons.py redraws buttons/icons/
 └── README.md
 ```

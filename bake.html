@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baking Timer</title>
-  <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
+  <link href="fonts/fonts.css" rel="stylesheet">
   <script>
     // Apply the saved theme before the page paints, so dark mode never flashes light.
     (function () {
@@ -37,7 +37,7 @@
   html, body {
     width: 100%;
     min-height: 100%;
-    font-family: 'Common Pixel', monospace;
+    font-family: 'Silkscreen', monospace;
     overflow-x: hidden;
   }
 
@@ -166,9 +166,9 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 }
 
 .text-btn {
-  font-family: 'Common Pixel', monospace;
+  font-family: 'Silkscreen', monospace;
   font-size: 16px;
-  letter-spacing: 1px;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--rose);
   cursor: pointer;
@@ -279,9 +279,9 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 
 #done,
 #timer {
-  font-size: 72px;
+  font-size: 64px;
   line-height: 1;
-  letter-spacing: 4px;
+  letter-spacing: 0;
   padding: 6px 22px 0;
   font-variant-numeric: tabular-nums;
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
@@ -296,8 +296,8 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 }
 
 #status {
-  font-size: 14px;
-  letter-spacing: 2px;
+  font-size: 16px;
+  letter-spacing: 0;
   text-transform: uppercase;
   padding: 0 8px;
 }
@@ -320,8 +320,8 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 /* ==================== PANELS ==================== */
 
 .panel-title {
-  font-size: 14px;
-  letter-spacing: 2px;
+  font-size: 16px;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--rose-dark);
   margin-bottom: 10px;
@@ -360,7 +360,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 }
 
 #custom-form input {
-  font-family: 'Common Pixel', monospace;
+  font-family: 'Silkscreen', monospace;
   font-size: 16px;
   color: var(--rose-dark);
   background: rgba(255, 255, 255, 0.5);
@@ -380,13 +380,13 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 }
 
 #custom-form input[type="text"] {
-  width: 150px;
+  width: 190px;
 }
 
 #custom-error {
   width: 100%;
   text-align: center;
-  font-size: 13px;
+  font-size: 16px;
   color: var(--rose-dark);
 }
 
@@ -410,7 +410,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 }
 
 #tray-empty {
-  font-size: 13px;
+  font-size: 16px;
   text-align: center;
   margin-bottom: 10px;
   color: var(--rose);
@@ -438,14 +438,14 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 
 .tray-name {
   grid-column: 1 / -1;
-  font-size: 15px;
+  font-size: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .tray-time {
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1;
   padding: 2px 4px 0;
   text-align: center;
@@ -467,7 +467,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 /* ==================== MEDIA QUERIES ==================== */
 
 @media screen and (max-height: 760px) and (min-width: 769px) {
-  #done, #timer { font-size: 60px; }
+  #done, #timer { font-size: 56px; }
   #cookie-container { height: clamp(180px, 32vh, 300px); }
 }
 
@@ -478,7 +478,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 
   #done,
   #timer {
-    font-size: 56px;
+    font-size: 48px;
   }
 
   .controls { gap: 16px; }
@@ -497,7 +497,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
     width: 110px;
   }
 
-  .text-btn { font-size: 14px; }
+  .text-btn { font-size: 16px; letter-spacing: 0; }
 }
 
 </style>
