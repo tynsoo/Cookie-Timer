@@ -119,27 +119,29 @@ html.dark #start-button-img {
 
 #themeToggle {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 18px;
+  right: 18px;
   z-index: 3;
-  font-family: 'Common Pixel', monospace;
-  font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #b45a5a;
-  background: #e8e0cb;
-  border: 3px solid #b45a5a;
-  border-radius: 8px;
-  box-shadow: 0 4px 0 #8a3a3a;
-  padding: 3px 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 0;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-html.dark #themeToggle {
-  color: #d98a7a;
-  background: #3a2a2e;
-  border-color: #d98a7a;
-  box-shadow: 0 4px 0 #1e1215;
+#themeToggle:hover {
+  transform: scale(1.1);
+}
+
+#themeToggle img {
+  width: 51px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+html.dark #themeToggle img {
+  filter: brightness(0.85);
 }
 
 /* MEDIA QUERIES */
@@ -171,7 +173,7 @@ html.dark #themeToggle {
 
   <div id="start-screen">
     <img id="start-screen-bg" src="images/start_background.png">
-    <button id="themeToggle" type="button"></button>
+    <button id="themeToggle" type="button"><img alt=""></button>
     <h1 id="start-title">Cookie timer</h1>
     <a id="startBtn" href="bake.html">
       <img id="start-button-img" src="buttons/lets-bake.png" alt="Start Baking">
@@ -184,7 +186,12 @@ html.dark #themeToggle {
       var KEY = 'cookieTimer.settings';
       var btn = document.getElementById('themeToggle');
       var root = document.documentElement;
-      function label() { btn.textContent = root.classList.contains('dark') ? 'Light mode' : 'Dark mode'; }
+      function label() {
+        var dark = root.classList.contains('dark');
+        btn.querySelector('img').src = 'buttons/icons/' + (dark ? 'sun' : 'moon') + '.png';
+        btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        btn.setAttribute('aria-label', btn.title);
+      }
       btn.addEventListener('click', function () {
         var dark = !root.classList.contains('dark');
         root.classList.toggle('dark', dark);

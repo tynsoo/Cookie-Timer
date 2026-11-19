@@ -18,39 +18,35 @@
 </head>
 
 <style>
- * {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
   :root {
-    --cream: #e8e0cb;
-    --rose: #b45a5a;
-    --rose-dark: #8a3a3a;
-    --timer-bg: #a12b00;
-    --timer-shadow: #6d1900;
+    /* Colors picked from the hand-drawn buttons */
+    --cream: #e8e2cd;
+    --rose: #b25959;
+    --rose-dark: #873a3a;
+    --rose-light: #cb9990;
     --timer-text: #ffe69c;
-    --panel-bg: rgba(255, 243, 224, 0.94);
-    --panel-text: #6d1900;
-  }
-
-  html.dark {
-    --cream: #3a2a2e;
-    --rose: #d98a7a;
-    --rose-dark: #1e1215;
-    --timer-bg: #5a1800;
-    --timer-shadow: #2a0b00;
-    --timer-text: #ffd77a;
-    --panel-bg: rgba(38, 24, 28, 0.94);
-    --panel-text: #ffe69c;
+    --pixel: 3px;            /* one art pixel on screen */
   }
 
   html, body {
     width: 100%;
     min-height: 100%;
-    font-family: 'Common Pixel', sans-serif;
+    font-family: 'Common Pixel', monospace;
     overflow-x: hidden;
+  }
+
+  img {
+    image-rendering: pixelated;
+  }
+
+  .hidden {
+    display: none !important;
   }
 
 /* ==================== BAKE SCREEN ==================== */
@@ -59,17 +55,20 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  padding-bottom: 40px;
+  padding: 0 16px 48px;
+  color: var(--rose);
+}
+
+/* Tablecloth on its own fixed layer (background-attachment: fixed misbehaves on phones) */
+#bg {
+  position: fixed;
+  inset: 0;
   background-color: #8b4545;
   background-image: url('images/background_2.png');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   image-rendering: pixelated;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #fff3e0;
+  z-index: 0;
 }
 
 /* Dark mode: dim the tablecloth without redrawing it */
@@ -81,104 +80,167 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  z-index: 0;
+  z-index: 1;
 }
 
 html.dark #bake-screen::before {
   opacity: 1;
 }
 
-#bake-screen > * {
+#bake-screen > *:not(#bg) {
   position: relative;
   z-index: 1;
 }
 
-html.dark #bake-screen img {
-  filter: brightness(0.88);
+html.dark #bake-screen img,
+html.dark .frame:not(.selected):not(.timer-frame) {
+  filter: brightness(0.85);
 }
 
-/* ==================== BACK BUTTON ==================== */
+/* ==================== PIXEL FRAMES ==================== */
+/* Any width of button or panel, drawn from the same edges as start.png */
 
-#bake-screen > .back-button {
-  position: fixed;
-  top: 64px;
-  left: 90px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1000;
-}
-
-.back-button img {
-  width: 115px;
-  height: auto;
+.frame {
+  border-style: solid;
+  border-width: 12px 15px 21px 15px;
+  border-image: url('buttons/icons/frame-cream.png') 12 15 21 15 fill / 12px 15px 21px 15px;
   image-rendering: pixelated;
-  transition: transform 0.2s ease;
+  background: none;
 }
 
-.back-button img:hover {
-  transform: scale(1.1);
-}
-
-/* ==================== PIXEL BUTTONS ==================== */
-
-.pixel-btn {
-  font-family: 'Common Pixel', monospace;
-  font-size: 15px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--rose);
-  background: var(--cream);
-  border: 3px solid var(--rose);
-  border-radius: 8px;
-  box-shadow: 0 4px 0 var(--rose-dark);
-  padding: 5px 12px;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-  white-space: nowrap;
-}
-
-.pixel-btn:hover:not(:disabled) {
-  transform: scale(1.06);
-}
-
-.pixel-btn:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 var(--rose-dark);
-}
-
-.pixel-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pixel-btn.selected {
-  background: var(--rose);
+.frame.selected {
+  border-image-source: url('buttons/icons/frame-selected.png');
   color: var(--cream);
 }
 
-.pixel-btn.small {
-  font-size: 12px;
-  padding: 3px 8px;
+.frame.timer-frame {
+  border-image-source: url('buttons/icons/frame-timer.png');
+  color: var(--timer-text);
 }
 
-/* ==================== SETTINGS BAR ==================== */
+/* ==================== BUTTONS ==================== */
+
+.icon-btn,
+.img-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform 0.2s ease;
+}
+
+.icon-btn img {
+  width: calc(17 * var(--pixel));
+  height: calc(16 * var(--pixel));
+}
+
+.icon-btn.small img {
+  width: calc(17 * 2px);
+  height: calc(16 * 2px);
+}
+
+.icon-btn:hover:not(:disabled),
+.img-btn:hover:not(:disabled),
+.text-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.icon-btn:active:not(:disabled),
+.img-btn:active:not(:disabled),
+.text-btn:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.icon-btn:disabled,
+.text-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.icon-btn:focus-visible,
+.img-btn:focus-visible,
+.text-btn:focus-visible {
+  outline: 3px dashed var(--timer-text);
+  outline-offset: 2px;
+}
+
+.text-btn {
+  font-family: 'Common Pixel', monospace;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--rose);
+  cursor: pointer;
+  padding: 0 4px;
+  min-height: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: transform 0.2s ease;
+}
+
+/* ==================== TOP BAR ==================== */
+
+#top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 0 0;
+}
+
+#backBtn img {
+  width: 130px;
+  height: auto;
+}
 
 #settings-bar {
-  position: fixed;
-  top: 64px;
-  right: 24px;
   display: flex;
-  gap: 10px;
-  z-index: 1000;
+  gap: 8px;
 }
 
-/* ==================== COOKIE CONTAINER ==================== */
+/* ==================== LAYOUT ==================== */
+
+#layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 1100px) {
+  #layout {
+    grid-template-columns: 1fr minmax(0, 720px) 1fr;
+    align-items: start;
+  }
+
+  #oven { grid-column: 2; }
+
+  #trays {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    width: 100%;
+    max-width: 290px;
+    margin-top: 24px;
+  }
+}
+
+#oven {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ==================== COOKIE ==================== */
 
 #cookie-container {
   width: 100%;
-  height: min(400px, 44vh);
+  height: clamp(190px, 33vh, 320px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,51 +248,43 @@ html.dark #bake-screen img {
 }
 
 #cookie-dough {
-  width: 200px;
+  width: clamp(150px, 20vh, 210px);
   height: auto;
-  image-rendering: pixelated;
-  margin: 20px auto;
   transition: transform 0.2s ease;
-}
-
-#cookie-baking {
-  width: min(400px, 44vh);
-  height: min(400px, 44vh);
-  image-rendering: pixelated;
-  margin: 5px;
-  transition: transform 0.2s ease;
-}
-
-#cookie-done {
-  width: min(500px, 90vw);
-  height: auto;
-  image-rendering: pixelated;
-  margin: 20px auto;
-  transition: transform 0.2s ease;
-}
-
-.hidden {
-  display: none !important;
 }
 
 #cookie-dough:hover {
   transform: scale(1.05);
 }
 
+#cookie-baking {
+  width: clamp(200px, 36vh, 340px);
+  height: clamp(200px, 36vh, 340px);
+}
+
+#cookie-done {
+  width: min(440px, 88vw);
+  max-height: 100%;
+  object-fit: contain;
+}
+
 /* ==================== TIMER ==================== */
+
+#timer-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 
 #done,
 #timer {
-  background-color: var(--timer-bg);
-  color: var(--timer-text);
-  font-size: 64px;
-  font-family: 'Common Pixel', sans-serif;
-  border-radius: 20px;
-  padding: 10px 30px;
-  margin-top: 0px;
-  box-shadow: 0 4px 0 var(--timer-shadow);
-  image-rendering: pixelated;
-  flex-shrink: 0;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: 4px;
+  padding: 6px 22px 0;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
 }
 
 #timer.paused {
@@ -238,57 +292,48 @@ html.dark #bake-screen img {
 }
 
 @keyframes blink {
-  50% { opacity: 0.45; }
+  50% { opacity: 0.4; }
+}
+
+#status {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0 8px;
 }
 
 /* ==================== CONTROLS ==================== */
+
 .controls {
   display: flex;
   justify-content: center;
-  gap: 5vw; /* space between buttons */
-  margin-top: 2vh;
+  gap: 28px;
+  margin-top: 14px;
 }
 
 #bakeStart img,
 #bakeEnd img {
-  width: 15vw;     /* smaller than before */
-  max-width: 200px; /* prevents them from being too big on large screens */
+  width: clamp(120px, 14vw, 190px);
   height: auto;
-  image-rendering: pixelated;
-  transition: transform 0.2s ease;
-  background: none;   /* remove default button background */
-  border: none;       /* remove border */
-  padding: 0;         /* remove default padding */
-  cursor: pointer;
 }
 
-#bakeStart img:hover,
-#bakeEnd img:hover {
-  outline: none;
-  transform: scale(1.1);
+/* ==================== PANELS ==================== */
+
+.panel-title {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--rose-dark);
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 /* ==================== PRESETS ==================== */
 
-.panel {
-  background: var(--panel-bg);
-  color: var(--panel-text);
-  border: 4px solid var(--rose);
-  border-radius: 12px;
-  box-shadow: 0 6px 0 var(--rose-dark);
-  padding: 12px 14px;
-}
-
-.panel h2 {
-  font-size: 16px;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
 #presets-panel {
   margin-top: 18px;
-  max-width: 92vw;
+  width: min(720px, 100%);
+  padding: 4px 6px 2px;
 }
 
 #presets {
@@ -296,8 +341,7 @@ html.dark #bake-screen img {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  max-width: 92vw;
+  gap: 8px 10px;
 }
 
 .preset {
@@ -306,13 +350,8 @@ html.dark #bake-screen img {
   gap: 2px;
 }
 
-.preset .delete {
-  margin-left: -6px;
-  border-radius: 0 8px 8px 0;
-}
-
 #custom-form {
-  margin-top: 14px;
+  margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -322,12 +361,18 @@ html.dark #bake-screen img {
 
 #custom-form input {
   font-family: 'Common Pixel', monospace;
-  font-size: 15px;
-  color: var(--panel-text);
-  background: transparent;
+  font-size: 16px;
+  color: var(--rose-dark);
+  background: rgba(255, 255, 255, 0.5);
   border: 3px solid var(--rose);
-  border-radius: 6px;
+  border-bottom-width: 5px;
+  border-radius: 0;
   padding: 4px 6px;
+}
+
+#custom-form input:focus {
+  outline: none;
+  border-color: var(--rose-dark);
 }
 
 #custom-form input[type="number"] {
@@ -335,21 +380,21 @@ html.dark #bake-screen img {
 }
 
 #custom-form input[type="text"] {
-  width: 140px;
+  width: 150px;
 }
 
 #custom-error {
   width: 100%;
   text-align: center;
   font-size: 13px;
-  color: #c0392b;
+  color: var(--rose-dark);
 }
 
 /* ==================== EXTRA TRAYS (multiple timers) ==================== */
 
 #trays {
-  margin-top: 22px;
-  width: min(420px, 92vw);
+  width: min(320px, 100%);
+  padding: 4px 4px 2px;
 }
 
 #tray-list {
@@ -361,22 +406,29 @@ html.dark #bake-screen img {
 }
 
 #tray-list:empty {
-  margin-bottom: 0;
+  display: none;
+}
+
+#tray-empty {
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 10px;
+  color: var(--rose);
 }
 
 .tray {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px 10px;
+  grid-template-columns: auto 1fr;
+  gap: 6px 8px;
   align-items: center;
-  padding: 8px 10px;
-  border: 3px dashed var(--rose);
-  border-radius: 8px;
+  padding: 8px;
+  border: 3px dashed var(--rose-light);
 }
 
 .tray.is-done {
   border-style: solid;
-  background: rgba(255, 215, 122, 0.35);
+  border-color: var(--rose);
+  background: rgba(255, 230, 156, 0.5);
   animation: wiggle 0.6s steps(2) 4;
 }
 
@@ -385,6 +437,7 @@ html.dark #bake-screen img {
 }
 
 .tray-name {
+  grid-column: 1 / -1;
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -393,129 +446,130 @@ html.dark #bake-screen img {
 
 .tray-time {
   font-size: 26px;
-  background: var(--timer-bg);
-  color: var(--timer-text);
-  border-radius: 8px;
-  padding: 2px 10px;
+  line-height: 1;
+  padding: 2px 4px 0;
   text-align: center;
-  min-width: 96px;
+  min-width: 100px;
+  font-variant-numeric: tabular-nums;
 }
 
 .tray-actions {
-  grid-column: 1 / -1;
   display: flex;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
-/* Wide screens: keep extra trays beside the cookie instead of under it */
-@media screen and (min-width: 1100px) {
-  #trays {
-    position: fixed;
-    right: 24px;
-    top: 130px;
-    width: 300px;
-    max-height: calc(100vh - 160px);
-    overflow-y: auto;
-    margin-top: 0;
-  }
+#addTray {
+  display: block;
+  margin: 0 auto;
 }
 
 /* ==================== MEDIA QUERIES ==================== */
+
+@media screen and (max-height: 760px) and (min-width: 769px) {
+  #done, #timer { font-size: 60px; }
+  #cookie-container { height: clamp(180px, 32vh, 300px); }
+}
+
 @media screen and (max-width: 768px) {
-  #bakeStart img,
-  #bakeEnd img {
-    width: 35vw;      /* bigger on smaller screens */
-    max-width: 120px;
-  }
+  :root { --pixel: 2px; }
 
-  #bake-screen > .back-button {
-    top: 12px;
-    left: 12px;
-  }
-
-  .back-button img {
-    width: 90px;
-  }
-
-  #settings-bar {
-    position: static;
-    margin-top: 64px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  #backBtn img { width: 100px; }
 
   #done,
   #timer {
-    font-size: 48px;
+    font-size: 56px;
+  }
+
+  .controls { gap: 16px; }
+
+  #bakeStart img,
+  #bakeEnd img {
+    width: 120px;
   }
 }
 
 @media screen and (max-width: 480px) {
+  #bake-screen { padding: 0 10px 40px; }
+
   #bakeStart img,
   #bakeEnd img {
-    width: 45vw;      /* adjust for mobile */
-    max-width: 100px;
+    width: 110px;
   }
 
-  .pixel-btn {
-    font-size: 13px;
-  }
+  .text-btn { font-size: 14px; }
 }
-
 
 </style>
 
 <body>
 
   <div id="bake-screen">
-    <button id="backBtn" class="back-button">
+    <div id="bg" aria-hidden="true"></div>
+
+    <header id="top-bar">
+      <button id="backBtn" class="img-btn" type="button" aria-label="Back to start">
         <img src="buttons/back.png" alt="Back">
       </button>
 
-    <div id="settings-bar">
-      <button id="soundToggle" class="pixel-btn small" type="button"></button>
-      <button id="notifyToggle" class="pixel-btn small" type="button"></button>
-      <button id="themeToggle" class="pixel-btn small" type="button"></button>
-    </div>
+      <div id="settings-bar">
+        <button id="soundToggle" class="icon-btn" type="button"><img alt=""></button>
+        <button id="notifyToggle" class="icon-btn" type="button"><img alt=""></button>
+        <button id="themeToggle" class="icon-btn" type="button"><img alt=""></button>
+      </div>
+    </header>
 
-    <div id="cookie-container">
-      <img id="cookie-dough" src="images/cookie_1.png" alt="Cookie Dough">
-      <img id="cookie-baking" src="images/cookie-gif.PNG" class="hidden" alt="Baking">
-      <img id="cookie-done" src="images/done-cookie.png" class="hidden" alt="Done Cookie">
-    </div>
+    <main id="layout">
+      <section id="oven">
+        <div id="cookie-container">
+          <img id="cookie-dough" src="images/cookie_1.png" alt="Cookie Dough">
+          <img id="cookie-baking" src="images/cookie-gif.PNG" class="hidden" alt="Baking">
+          <img id="cookie-done" src="images/done-cookie.png" class="hidden" alt="Done Cookie">
+        </div>
 
-    <div class="controls">
-      <a id="bakeStart" href="#">
-        <img src="buttons/start.png" alt="Start">
-      </a>
-      <a id="bakeEnd" href="#">
-        <img src="buttons/reset.png" alt="Reset">
-      </a>
-    </div>
+        <div id="timer-box">
+          <div id="timer" class="frame timer-frame" role="timer" aria-live="off">10:00</div>
+          <div id="done" class="frame timer-frame hidden">ENJOY!</div>
+          <div id="status" class="frame" aria-live="polite">Ready to bake</div>
+        </div>
 
-    <div id="timer">10:00</div>
-    <div class="hidden" id="done">ENJOY!</div>
+        <div class="controls">
+          <button id="bakeStart" class="img-btn" type="button">
+            <img src="buttons/start.png" alt="Start">
+          </button>
+          <button id="bakeEnd" class="img-btn" type="button">
+            <img src="buttons/reset.png" alt="Reset">
+          </button>
+        </div>
 
-    <!-- Timer presets -->
-    <div id="presets-panel" class="panel">
-      <div id="presets"></div>
-      <form id="custom-form" class="hidden" autocomplete="off">
-        <input id="customName" type="text" maxlength="16" placeholder="Name (optional)">
-        <input id="customMin" type="number" min="0" max="180" placeholder="min" aria-label="Minutes">
-        <span>:</span>
-        <input id="customSec" type="number" min="0" max="59" placeholder="sec" aria-label="Seconds">
-        <button id="customUse" class="pixel-btn small" type="submit">Use</button>
-        <button id="customSave" class="pixel-btn small" type="button">Save preset</button>
-        <div id="custom-error" class="hidden"></div>
-      </form>
-    </div>
+        <!-- Timer presets -->
+        <div id="presets-panel" class="frame">
+          <h2 class="panel-title">Bake time</h2>
+          <div id="presets"></div>
+          <form id="custom-form" class="hidden" autocomplete="off">
+            <input id="customName" type="text" maxlength="16" placeholder="Name (optional)">
+            <input id="customMin" type="number" min="0" max="180" placeholder="min" aria-label="Minutes">
+            <span>:</span>
+            <input id="customSec" type="number" min="0" max="59" placeholder="sec" aria-label="Seconds">
+            <button id="customUse" class="icon-btn small" type="submit" title="Use this time once" aria-label="Use this time once">
+              <img src="buttons/icons/check.png" alt="">
+            </button>
+            <button id="customSave" class="icon-btn small" type="button" title="Save as a preset" aria-label="Save as a preset">
+              <img src="buttons/icons/save.png" alt="">
+            </button>
+            <div id="custom-error" class="hidden"></div>
+          </form>
+        </div>
+      </section>
 
-    <!-- Multiple timers: extra trays that count down on their own -->
-    <section id="trays" class="panel">
-      <h2>Extra trays</h2>
-      <ul id="tray-list"></ul>
-      <button id="addTray" class="pixel-btn small" type="button">+ Add tray</button>
-    </section>
+      <!-- Multiple timers: extra trays that count down on their own -->
+      <aside id="trays" class="frame">
+        <h2 class="panel-title">Extra trays</h2>
+        <ul id="tray-list"></ul>
+        <p id="tray-empty">Baking more than one batch?</p>
+        <button id="addTray" class="text-btn frame" type="button">+ Add tray</button>
+      </aside>
+    </main>
   </div>
 </body>
 
@@ -556,6 +610,25 @@ html.dark #bake-screen img {
 
   const settings = loadSettings();
 
+  // ==================== ICONS ====================
+  function setIcon(button, name, label) {
+    const img = button.querySelector('img');
+    const src = `buttons/icons/${name}.png`;
+    if (!img.getAttribute('src') || !img.src.endsWith(src)) img.src = src;
+    button.title = label;
+    button.setAttribute('aria-label', label);
+  }
+
+  function iconButton(name, label, action, small = true) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'icon-btn' + (small ? ' small' : '');
+    btn.innerHTML = '<img alt="">';
+    if (action) btn.dataset.action = action;
+    setIcon(btn, name, label);
+    return btn;
+  }
+
   // ==================== COUNTDOWN ====================
   // Counts against the clock instead of counting ticks, so it stays accurate
   // when the browser slows timers down in a background tab.
@@ -568,6 +641,7 @@ html.dark #bake-screen img {
     get running() { return this.endAt !== null; }
     get secondsLeft() { return Math.ceil(this.remainingMs / 1000); }
     get started() { return this.running || this.remainingMs < this.duration * 1000; }
+    get paused() { return this.started && !this.running && !this.done; }
 
     start() {
       if (this.running || this.remainingMs <= 0) return;
@@ -665,23 +739,23 @@ html.dark #bake-screen img {
   }
 
   function renderSettingsBar() {
-    soundToggle.textContent = settings.sound ? 'Sound: on' : 'Sound: off';
+    setIcon(soundToggle, settings.sound ? 'sound' : 'sound-off',
+      settings.sound ? 'Sound is on (click to mute)' : 'Sound is off (click to turn on)');
     soundToggle.setAttribute('aria-pressed', settings.sound);
 
     if (!canNotify) {
       notifyToggle.classList.add('hidden');
     } else if (Notification.permission === 'denied') {
-      notifyToggle.textContent = 'Alerts: blocked';
-      notifyToggle.title = 'Notifications are blocked for this site in your browser settings.';
+      setIcon(notifyToggle, 'bell-off', 'Notifications are blocked in your browser settings');
       notifyToggle.setAttribute('aria-pressed', false);
     } else {
       const on = settings.notify && Notification.permission === 'granted';
-      notifyToggle.textContent = on ? 'Alerts: on' : 'Alerts: off';
-      notifyToggle.title = 'Show a browser notification when cookies are ready';
+      setIcon(notifyToggle, on ? 'bell' : 'bell-off',
+        on ? 'Notifications are on (click to turn off)' : 'Notify me when cookies are ready');
       notifyToggle.setAttribute('aria-pressed', on);
     }
 
-    themeToggle.textContent = isDark() ? 'Light mode' : 'Dark mode';
+    setIcon(themeToggle, isDark() ? 'sun' : 'moon', isDark() ? 'Switch to light mode' : 'Switch to dark mode');
   }
 
   soundToggle.addEventListener('click', () => {
@@ -731,11 +805,19 @@ html.dark #bake-screen img {
   const bakeEnd = document.getElementById('bakeEnd');
   const timerDisplay = document.getElementById('timer');
   const doneMsg = document.getElementById('done');
+  const statusEl = document.getElementById('status');
+
+  const BAKING_GIF = 'images/cookie-gif.PNG';
+  const BAKING_STILL = 'images/cookie-baking-still.png'; // one frame, shown while stopped
 
   const mainTimer = new Countdown(settings.duration, () => {
     renderMain();
     alertDone('Your cookies are ready! 🍪', `${currentPresetName()} batch is done baking.`);
   });
+
+  function setSrc(img, src) {
+    if (!img.src.endsWith(src)) img.src = src;
+  }
 
   function renderMain() {
     const t = mainTimer;
@@ -744,16 +826,22 @@ html.dark #bake-screen img {
     cookieDough.classList.toggle('hidden', !idle);
     cookieBaking.classList.toggle('hidden', idle || t.done);
     cookieDone.classList.toggle('hidden', !t.done);
+    // Freeze the cookie when stopped, so it's clear nothing is baking.
+    setSrc(cookieBaking, t.paused ? BAKING_STILL : BAKING_GIF);
 
     timerDisplay.textContent = formatTime(t.secondsLeft);
     timerDisplay.classList.toggle('hidden', t.done);
-    timerDisplay.classList.toggle('paused', t.started && !t.running && !t.done);
+    timerDisplay.classList.toggle('paused', t.paused);
     doneMsg.classList.toggle('hidden', !t.done);
 
-    // Start becomes Stop while baking, so the same spot pauses and resumes.
-    const src = t.running ? 'buttons/stop.png' : 'buttons/start.png';
-    if (!bakeStartImg.src.endsWith(src)) bakeStartImg.src = src;
-    bakeStartImg.alt = t.running ? 'Stop' : (t.started && !t.done ? 'Resume' : 'Start');
+    statusEl.textContent = t.done ? 'Cookies are ready'
+      : t.running ? `Baking · ${currentPresetName()}`
+      : t.paused ? 'Stopped'
+      : `Ready · ${currentPresetName()}`;
+
+    // Start becomes Stop while baking, so the same spot stops and resumes.
+    setSrc(bakeStartImg, t.running ? 'buttons/stop.png' : 'buttons/start.png');
+    bakeStartImg.alt = t.running ? 'Stop' : (t.paused ? 'Resume' : 'Start');
 
     // Changing the bake time mid-bake would be confusing, so lock presets while it runs.
     document.querySelectorAll('#presets button, #custom-form button').forEach((b) => {
@@ -763,7 +851,8 @@ html.dark #bake-screen img {
     updateTitle();
   }
 
-  // Start / Stop (pause) / Resume
+  // Start / Stop / Resume. pointerdown would fire twice with click on some phones,
+  // so only click is used, and the handler reads the state once.
   bakeStart.addEventListener('click', (e) => {
     e.preventDefault();
     unlockAudio();
@@ -791,7 +880,7 @@ html.dark #bake-screen img {
     const t = mainTimer;
     if (t.done) document.title = 'Cookies ready! 🍪';
     else if (t.running) document.title = `${formatTime(t.secondsLeft)} · Baking`;
-    else if (t.started) document.title = `${formatTime(t.secondsLeft)} · Paused`;
+    else if (t.paused) document.title = `${formatTime(t.secondsLeft)} · Stopped`;
     else document.title = 'Baking Timer';
   }
 
@@ -810,7 +899,7 @@ html.dark #bake-screen img {
 
   function currentPresetName() {
     const p = allPresets().find((x) => x.id === settings.presetId);
-    return p ? p.name : 'Your';
+    return p ? p.name : 'Custom';
   }
 
   function chooseDuration(seconds, presetId) {
@@ -822,6 +911,14 @@ html.dark #bake-screen img {
     renderMain();
   }
 
+  function chip(text, selected) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'text-btn frame' + (selected ? ' selected' : '');
+    btn.textContent = text;
+    return btn;
+  }
+
   function renderPresets() {
     presetsEl.innerHTML = '';
 
@@ -829,20 +926,12 @@ html.dark #bake-screen img {
       const wrap = document.createElement('span');
       wrap.className = 'preset';
 
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'pixel-btn' + (p.id === settings.presetId ? ' selected' : '');
-      btn.textContent = `${p.name} ${formatTime(p.seconds)}`;
+      const btn = chip(`${p.name} ${formatTime(p.seconds)}`, p.id === settings.presetId);
       btn.addEventListener('click', () => chooseDuration(p.seconds, p.id));
       wrap.appendChild(btn);
 
       if (p.id.startsWith('custom-')) {
-        const del = document.createElement('button');
-        del.type = 'button';
-        del.className = 'pixel-btn small delete';
-        del.textContent = 'x';
-        del.title = `Delete "${p.name}" preset`;
-        del.setAttribute('aria-label', del.title);
+        const del = iconButton('remove', `Delete "${p.name}" preset`);
         del.addEventListener('click', () => {
           settings.customPresets = settings.customPresets.filter((x) => x.id !== p.id);
           if (settings.presetId === p.id) settings.presetId = null;
@@ -857,11 +946,9 @@ html.dark #bake-screen img {
     });
 
     // A custom time that wasn't saved as a preset still gets a highlighted chip.
-    const customChip = document.createElement('button');
-    customChip.type = 'button';
     const isCustomTime = !allPresets().some((p) => p.id === settings.presetId);
-    customChip.className = 'pixel-btn' + (isCustomTime ? ' selected' : '');
-    customChip.textContent = isCustomTime ? `Custom ${formatTime(settings.duration)}` : '+ Custom';
+    const customChip = chip(isCustomTime ? `Custom ${formatTime(settings.duration)}` : '+ Custom', isCustomTime);
+    customChip.id = 'customChip';
     customChip.addEventListener('click', () => {
       customForm.classList.toggle('hidden');
       if (!customForm.classList.contains('hidden')) {
@@ -891,7 +978,7 @@ html.dark #bake-screen img {
     return null;
   }
 
-  // "Use" applies the time once without saving it as a preset.
+  // The check button applies the time once without saving it as a preset.
   customForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const total = readCustomSeconds();
@@ -913,26 +1000,30 @@ html.dark #bake-screen img {
 
   // ==================== EXTRA TRAYS (multiple timers) ====================
   const trayList = document.getElementById('tray-list');
+  const trayEmpty = document.getElementById('tray-empty');
   const addTrayBtn = document.getElementById('addTray');
   const trays = [];
   let trayCount = 1; // tray 1 is the big cookie
 
   function addTray() {
     trayCount++;
-    const name = `Tray ${trayCount} · ${currentPresetName() === 'Your' ? 'Custom' : currentPresetName()}`;
+    const name = `Tray ${trayCount} · ${currentPresetName()}`;
 
     const li = document.createElement('li');
     li.className = 'tray';
     li.innerHTML = `
       <span class="tray-name"></span>
-      <span class="tray-time"></span>
-      <div class="tray-actions">
-        <button type="button" class="pixel-btn small" data-action="toggle"></button>
-        <button type="button" class="pixel-btn small" data-action="reset">Reset</button>
-        <button type="button" class="pixel-btn small" data-action="remove">Remove</button>
-      </div>`;
+      <span class="tray-time frame timer-frame"></span>
+      <div class="tray-actions"></div>`;
     li.querySelector('.tray-name').textContent = name;
     li.querySelector('.tray-name').title = name;
+
+    const actions = li.querySelector('.tray-actions');
+    actions.append(
+      iconButton('play', 'Start', 'toggle'),
+      iconButton('reset', 'Reset', 'reset'),
+      iconButton('remove', 'Remove tray', 'remove'),
+    );
 
     const tray = { name, el: li, timer: null };
     tray.timer = new Countdown(settings.duration, () => {
@@ -941,8 +1032,9 @@ html.dark #bake-screen img {
     });
 
     li.addEventListener('click', (e) => {
-      const action = e.target.dataset && e.target.dataset.action;
-      if (!action) return;
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
       if (action === 'toggle') {
         unlockAudio();
         if (tray.timer.running) tray.timer.pause();
@@ -955,6 +1047,7 @@ html.dark #bake-screen img {
       } else if (action === 'remove') {
         trays.splice(trays.indexOf(tray), 1);
         li.remove();
+        trayEmpty.classList.toggle('hidden', trays.length > 0);
         return;
       }
       renderTray(tray);
@@ -962,6 +1055,7 @@ html.dark #bake-screen img {
 
     trays.push(tray);
     trayList.appendChild(li);
+    trayEmpty.classList.add('hidden');
     renderTray(tray);
   }
 
@@ -969,8 +1063,9 @@ html.dark #bake-screen img {
     const t = tray.timer;
     tray.el.classList.toggle('is-done', t.done);
     tray.el.querySelector('.tray-time').textContent = t.done ? 'READY!' : formatTime(t.secondsLeft);
-    tray.el.querySelector('[data-action="toggle"]').textContent =
-      t.running ? 'Stop' : (t.started && !t.done ? 'Resume' : 'Start');
+    setIcon(tray.el.querySelector('[data-action="toggle"]'),
+      t.running ? 'pause' : 'play',
+      t.running ? 'Stop' : (t.paused ? 'Resume' : 'Start'));
   }
 
   addTrayBtn.addEventListener('click', addTray);
@@ -998,11 +1093,9 @@ html.dark #bake-screen img {
     }
   });
 
-  // Pre-load background image and the stop button so swapping is instant
-  const bgImg = new Image();
-  bgImg.src = 'images/background_2.png';
-  const stopImg = new Image();
-  stopImg.src = 'buttons/stop.png';
+  // Pre-load images that get swapped in, so changes are instant
+  ['images/background_2.png', 'buttons/stop.png', BAKING_STILL, 'buttons/icons/pause.png']
+    .forEach((src) => { new Image().src = src; });
 
   // Back button - go to start screen
   document.getElementById('backBtn').addEventListener('click', () => {
