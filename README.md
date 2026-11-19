@@ -68,27 +68,32 @@ If the project is purely frontend, simply open the `index.html` file in your bro
 1. Open the application and click **Let's Bake**.
 2. Pick a preset, or click **+ Custom** to enter your own time. **Use** applies it once and **Save preset** keeps it for next time.
 3. Click **Start** to begin the countdown.
-4. Click **Stop** to pause, and **Start** again to resume.
+4. Click **Stop** to pause (the cookie and timer freeze), and **Start** again to resume.
 5. Click **Reset** to return the timer to its initial state.
 6. Baking more than one batch? Click **+ Add tray** to run extra timers at the same time.
-7. Wait for the chime (and notification, if you turned Alerts on).
+7. Wait for the chime (and notification, if you turned on the bell).
+
+The icons in the top corner turn sound on/off, turn browser notifications on/off (bell), and switch between dark and light mode (moon/sun).
 
 ## Project Structure
 
 ```
 Cookie-Timer/
-├── buttons/      pixel-art buttons
+├── buttons/      pixel-art buttons (icons/ holds the generated icon buttons)
 ├── images/       backgrounds and cookie art
 ├── index.html    start screen
 ├── bake.html     timer screen
+├── fonts/        Silkscreen pixel font (SIL Open Font License)
+├── tools/        make_icons.py redraws buttons/icons/
 └── README.md
 ```
+
+The icon buttons copy the edges and colors of `buttons/start.png`. To change one, edit its 7×7 glyph in `tools/make_icons.py` and run `python3 tools/make_icons.py` (needs Pillow).
 
 ## Future Improvements
 
 * Keep running timers going after a page reload
 * Name extra trays
-* Pixel-art buttons for the new controls
 
 ## Contributing
 
