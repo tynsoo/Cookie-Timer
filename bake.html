@@ -172,7 +172,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
   text-transform: uppercase;
   color: var(--rose);
   cursor: pointer;
-  padding: 0 4px;
+  padding: 1px 4px 0;
   min-height: 0;
   line-height: 1.2;
   white-space: nowrap;
@@ -282,7 +282,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
   font-size: 64px;
   line-height: 1;
   letter-spacing: 0;
-  padding: 6px 22px 0;
+  padding: 0 22px 6px;
   font-variant-numeric: tabular-nums;
   text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
 }
@@ -299,7 +299,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
   font-size: 16px;
   letter-spacing: 0;
   text-transform: uppercase;
-  padding: 0 8px;
+  padding: 1px 8px 0;
 }
 
 /* ==================== CONTROLS ==================== */
@@ -325,6 +325,7 @@ html.dark .frame:not(.selected):not(.timer-frame) {
   text-transform: uppercase;
   color: var(--rose-dark);
   margin-bottom: 10px;
+  line-height: 1;
   text-align: center;
 }
 
@@ -368,6 +369,15 @@ html.dark .frame:not(.selected):not(.timer-frame) {
   border-bottom-width: 5px;
   border-radius: 0;
   padding: 4px 6px;
+  text-align: center;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#custom-form input::-webkit-outer-spin-button,
+#custom-form input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 #custom-form input:focus {
@@ -447,9 +457,10 @@ html.dark .frame:not(.selected):not(.timer-frame) {
 .tray-time {
   font-size: 24px;
   line-height: 1;
-  padding: 2px 4px 0;
+  padding: 1px 6px;
   text-align: center;
-  min-width: 100px;
+  min-width: max-content;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
