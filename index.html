@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chocolate-chip Bake Timer</title>
   <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
+  <script>
+    // Apply the saved theme before the page paints (shared with the bake page).
+    (function () {
+      var s = {};
+      try { s = JSON.parse(localStorage.getItem('cookieTimer.settings')) || {}; } catch (e) {}
+      var dark = s.theme ? s.theme === 'dark'
+        : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (dark) document.documentElement.classList.add('dark');
+    })();
+  </script>
 </head>
 <style>
   * {
@@ -50,7 +60,7 @@ body {
   text-shadow: 2px 2px #000;
   letter-spacing: 2px;
   font-weight: bold;
-  z-index: 1; 
+  z-index: 2;
   text-align: center;      /* center the text */
   width: 100%;   
 }
@@ -86,6 +96,52 @@ body {
   transform: scale(1.1);
 }
 
+/* ==================== DARK MODE ==================== */
+
+#start-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 8, 12, 0.62);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+html.dark #start-screen::after {
+  opacity: 1;
+}
+
+html.dark #start-button-img {
+  filter: brightness(0.88);
+}
+
+#themeToggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+  font-family: 'Common Pixel', monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #b45a5a;
+  background: #e8e0cb;
+  border: 3px solid #b45a5a;
+  border-radius: 8px;
+  box-shadow: 0 4px 0 #8a3a3a;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+html.dark #themeToggle {
+  color: #d98a7a;
+  background: #3a2a2e;
+  border-color: #d98a7a;
+  box-shadow: 0 4px 0 #1e1215;
+}
+
 /* MEDIA QUERIES */
 @media screen and (max-width: 768px) {
   #start-title {
@@ -115,12 +171,32 @@ body {
 
   <div id="start-screen">
     <img id="start-screen-bg" src="images/start_background.png">
+    <button id="themeToggle" type="button"></button>
     <h1 id="start-title">Cookie timer</h1>
     <a id="startBtn" href="bake.html">
       <img id="start-button-img" src="buttons/lets-bake.png" alt="Start Baking">
     </a>    
 </div>
-  
+
+  <script>
+    // Dark mode toggle, saved alongside the timer settings.
+    (function () {
+      var KEY = 'cookieTimer.settings';
+      var btn = document.getElementById('themeToggle');
+      var root = document.documentElement;
+      function label() { btn.textContent = root.classList.contains('dark') ? 'Light mode' : 'Dark mode'; }
+      btn.addEventListener('click', function () {
+        var dark = !root.classList.contains('dark');
+        root.classList.toggle('dark', dark);
+        var s = {};
+        try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+        s.theme = dark ? 'dark' : 'light';
+        try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
+        label();
+      });
+      label();
+    })();
+  </script>
 </body>
 
 </html>

@@ -4,11 +4,16 @@ Cookie Timer is a web-based countdown timer application designed to help users a
 
 ## Features
 
-* Real-time countdown timer
-* Start, pause, and reset functionality
-* Simple and responsive user interface
-* Optimized for desktop and mobile browsers
-* Easy-to-use controls for a seamless user experience
+* Real-time countdown timer that stays accurate in background tabs
+* Start, pause (Stop), resume, and reset
+* Timer presets: Chewy (8:00), Classic (10:00), Crispy (12:00), plus your own custom times you can save or delete
+* Multiple timers: add extra trays that count down on their own, each with start, stop, reset, and remove
+* Audio notification: a little 8-bit chime when a timer finishes (can be turned off)
+* Browser notifications when a timer finishes (opt in with the Alerts button)
+* Dark mode, which follows your system setting until you pick one
+* Persistent settings: your last bake time, custom presets, sound, alerts, and theme are remembered
+* Shows the countdown in the browser tab title
+* Simple and responsive user interface, optimized for desktop and mobile browsers
 
 ## Technologies Used
 
@@ -60,35 +65,30 @@ If the project is purely frontend, simply open the `index.html` file in your bro
 
 ## Usage
 
-1. Open the application.
-2. Set the desired timer duration.
+1. Open the application and click **Let's Bake**.
+2. Pick a preset, or click **+ Custom** to enter your own time. **Use** applies it once and **Save preset** keeps it for next time.
 3. Click **Start** to begin the countdown.
-4. Use **Pause** to temporarily stop the timer.
+4. Click **Stop** to pause, and **Start** again to resume.
 5. Click **Reset** to return the timer to its initial state.
-6. Wait for the timer to reach zero.
+6. Baking more than one batch? Click **+ Add tray** to run extra timers at the same time.
+7. Wait for the chime (and notification, if you turned Alerts on).
 
 ## Project Structure
 
 ```
 Cookie-Timer/
-├── assets/
-├── css/
-├── js/
-├── index.html
-├── README.md
-└── package.json
+├── buttons/      pixel-art buttons
+├── images/       backgrounds and cookie art
+├── index.html    start screen
+├── bake.html     timer screen
+└── README.md
 ```
-
-Update this structure to reflect your project's actual files and folders.
 
 ## Future Improvements
 
-* Support for multiple timers
-* Custom timer presets
-* Audio notifications
-* Browser notifications
-* Dark mode
-* Persistent timer settings
+* Keep running timers going after a page reload
+* Name extra trays
+* Pixel-art buttons for the new controls
 
 ## Contributing
 
